@@ -3,6 +3,8 @@ package less.android;
 import less.android.Collections.Students;
 import less.android.Models.Group;
 import less.android.Models.Student;
+import less.android.Utils.Logger;
+
 import java.time.Month;
 import java.util.Date;
 
@@ -16,41 +18,43 @@ public class Main {
     private static void testStudentsCollection() {
         int prevSize;
 
-        Group tmpGroup = new Group("Android 6");
-        Students userList = Students.getInstance();
+        Group testedGroup = new Group("Android 6");
+        Students testedStudents = Students.getInstance();
 
-        userList.add(new Student(
+        testedStudents.add(new Student(
                 "Pavel",
                 "Andreevich",
                 "Belugin",
                 new Date(90, Month.SEPTEMBER.getValue(), 30),
-                tmpGroup.getId()
+                testedGroup.getId()
         ));
 
-        userList.add(new Student(
+        testedStudents.add(new Student(
                 "Ivanov",
                 "Ivan",
                 "Ivanovich",
                 new Date(85, Month.JANUARY.getValue(), 1),
-                tmpGroup.getId()
+                testedGroup.getId()
         ));
 
-        prevSize = userList.size();
+        prevSize = testedStudents.size();
         try {
-            userList.commit();
+            testedStudents.commit();
         } catch (Exception e) {
             System.err.println("Collection should save its data.");
         }
-        userList.clear();
+        testedStudents.clear();
 
         try {
-            userList.list();
+            testedStudents.list();
         } catch (Exception e) {
             System.err.println("Collection should load its data.");
         }
 
-        if (userList.size() != prevSize) {
+        if (testedStudents.size() != prevSize) {
             System.err.println("Collection should restore its data.");
         }
+
+        Logger.print(testedStudents);
     }
 }

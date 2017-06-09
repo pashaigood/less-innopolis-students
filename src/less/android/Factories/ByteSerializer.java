@@ -1,7 +1,6 @@
 package less.android.Factories;
 
 import less.android.Interfaces.Serializer;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -9,12 +8,14 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class ByteSerializer extends ArrayList implements Serializer {
-    static private String FILE_NAME = "./resources/collections/byte/";
-    protected String fileName;
+    static private String PATH_TO_COLLECTION = "./resources/collections/byte/";
+    protected String FILE_NAME;
+
+    private static final short serialVersionUID = 4;
 
     public void list() {
         try (
-                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME + fileName));
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PATH_TO_COLLECTION + FILE_NAME));
                 ) {
             this.addAll((ArrayList) ois.readObject());
 
@@ -25,7 +26,7 @@ public class ByteSerializer extends ArrayList implements Serializer {
 
     public void commit() {
         try (
-                ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(FILE_NAME + fileName));
+                ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(PATH_TO_COLLECTION + FILE_NAME));
                 ) {
             oout.writeObject(this);
             oout.flush();

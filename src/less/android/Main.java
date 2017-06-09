@@ -9,10 +9,23 @@ import java.time.Month;
 import java.util.Date;
 
 public class Main {
-
-
     public static void main(String[] args) {
         testStudentsCollection();
+        testStudentsDesiaralizeCollection();
+    }
+
+    private static void testStudentsDesiaralizeCollection() {
+        Students testedStudents = Students.getInstance();
+
+        try {
+            testedStudents.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (testedStudents.size() == 0) {
+            System.err.println("Stored items should be loaded.");
+        }
     }
 
     private static void testStudentsCollection() {

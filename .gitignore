@@ -1,4 +1,11 @@
 .idea
 out
 lib
-resources/collections
+/resources/collections/byte/*
+!.gitkeep
+
+/resources/collections/xml/*
+!.gitkeep
+
+/resources/collections/json/*
+!.gitkeep

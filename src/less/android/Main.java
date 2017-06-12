@@ -1,6 +1,7 @@
 package less.android;
 
 import less.android.Collections.Students;
+import less.android.Factories.CollectionXmlSerializer;
 import less.android.Models.Group;
 import less.android.Models.Student;
 import less.android.Utils.Logger;
@@ -10,8 +11,16 @@ import java.util.Date;
 
 public class Main {
     public static void main(String[] args) {
-        testStudentsCollection();
-        testStudentsDesiaralizeCollection();
+        /*testStudentsCollection();
+        testStudentsDesiaralizeCollection();*/
+        tryCollectionXmlSerializer();
+    }
+
+    private static void tryCollectionXmlSerializer() {
+        new CollectionXmlSerializer(
+            testStudentsCollection(),
+            "./resources/collections/xml/students.xml"
+        );
     }
 
     private static void testStudentsDesiaralizeCollection() {
@@ -28,7 +37,7 @@ public class Main {
         }
     }
 
-    private static void testStudentsCollection() {
+    private static Students testStudentsCollection() {
         int prevSize;
 
         Group testedGroup = new Group("Android 6");
@@ -68,6 +77,8 @@ public class Main {
             System.err.println("Collection should restore its data.");
         }
 
-        Logger.print(testedStudents);
+//        Logger.print(testedStudents);
+
+        return testedStudents;
     }
 }

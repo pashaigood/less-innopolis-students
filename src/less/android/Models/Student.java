@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Student implements Serializable {
-    private Long id = Generator.generateId();
+    private final Long id = Generator.generateId();
     private String firstName;
     private String surename;
     private String secondName;

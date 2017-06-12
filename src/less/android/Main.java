@@ -17,10 +17,13 @@ public class Main {
     }
 
     private static void tryCollectionXmlSerializer() {
-        new CollectionXmlSerializer(
+        CollectionXmlSerializer collectionXmlSerializer = new CollectionXmlSerializer(
             testStudentsCollection(),
             "./resources/collections/xml/students.xml"
         );
+
+        collectionXmlSerializer.print();
+        collectionXmlSerializer.write();
     }
 
     private static void testStudentsDesiaralizeCollection() {
@@ -59,6 +62,16 @@ public class Main {
                 testedGroup.getId()
         ));
 
+        testedStudents.add(
+            new Student(
+                "John",
+                "Reese",
+                "Connor",
+                new Date(85, Month.FEBRUARY.getValue(), 28),
+                testedGroup.getId()
+            )
+        );
+
         prevSize = testedStudents.size();
         try {
             testedStudents.commit();
@@ -76,8 +89,6 @@ public class Main {
         if (testedStudents.size() != prevSize) {
             System.err.println("Collection should restore its data.");
         }
-
-//        Logger.print(testedStudents);
 
         return testedStudents;
     }

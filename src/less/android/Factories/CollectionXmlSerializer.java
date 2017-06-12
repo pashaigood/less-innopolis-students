@@ -12,8 +12,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -25,29 +25,24 @@ public class CollectionXmlSerializer {
     private DocumentBuilder builder;
     private DOMImplementation dom;
     private Document document;
-    private Element collection;
-    private String output;
+    private Element collectionNode;
+    private String filePath;
 
-    public CollectionXmlSerializer(Collection collection, String output) {
-        this.output = output;
+    public CollectionXmlSerializer(Collection collection, String filePath) {
+        this.filePath = filePath;
         createDom();
-
-        for (Object node: collection) {
-            writeNode(node);
-        }
-
-        print();
-        write();
+        writeCollection(collection);
     }
 
-    private void writeNode(Object element) {
-        Class _class = element.getClass();
-        String[] classPath = _class.getName().split("\\.");
-        String className = classPath[classPath.length - 1];
-        Element node = document.createElement(className);
-        writeFields(element, node);
-        writeMethods(element, node);
-        collection.appendChild(node);
+    private void writeCollection(Collection collection) {
+        collectionNode.setAttribute("name", collection.getClass().getSimpleName());
+
+        for (Object element: collection) {
+            Element node = document.createElement(element.getClass().getSimpleName());
+            writeFields(element, node);
+            writeMethods(element, node);
+            collectionNode.appendChild(node);
+        }
     }
 
     private void writeMethods(Object element, Element parent) {
@@ -106,8 +101,8 @@ public class CollectionXmlSerializer {
         }
         dom = builder.getDOMImplementation();
         document = dom.createDocument(null, null, null);
-        collection = document.createElement("Collection");
-        document.appendChild(collection);
+        collectionNode = document.createElement("Collection");
+        document.appendChild(collectionNode);
     }
 
 
@@ -119,38 +114,29 @@ public class CollectionXmlSerializer {
         return field.getType().getSimpleName();
     }
 
-    private void print() {
-        StreamResult result = new StreamResult(System.out);//Может быть любой поток вывода (файл, сокет ....)
-        transform(result);
+    public void print() {
+        output(new StreamResult(System.out));
     }
 
-    private void write() {
-        StreamResult result = null;
-        try {
-            result = new StreamResult(new FileOutputStream(output));
-        } catch (FileNotFoundException e) {
+    public void write() {
+        try (FileOutputStream stream = new FileOutputStream(filePath)) {
+            output(new StreamResult(stream));
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        transform(result);
     }
 
-    private void transform(StreamResult result) {
+    private void output(StreamResult result) {
         DOMSource source = new DOMSource(document);
+        TransformerFactory transFactory = TransformerFactory.newInstance();
 
-        TransformerFactory transFactory = TransformerFactory.newInstance(); // Об этом подробней в 4 вопросе
-
-        Transformer transformer = null;
         try {
-            transformer = transFactory.newTransformer();
+            Transformer transformer = transFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.transform(source, result);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void serialize(Collection collection) {
-
     }
 }
